@@ -1,4 +1,4 @@
-# Football Manager – Проект по Бази от данни
+# Football Manager 
 ## Описание
 
 
