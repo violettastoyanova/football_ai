@@ -1,0 +1,9 @@
+{
+  "intents": [
+    { "tag": "help" },
+    { "tag": "exit" },
+    { "tag": "add_club" },
+    { "tag": "list_clubs" },
+    { "tag": "delete_club" }
+  ]
+}
