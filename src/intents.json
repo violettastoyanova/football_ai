@@ -2,8 +2,14 @@
   "intents": [
     { "tag": "help" },
     { "tag": "exit" },
+
     { "tag": "add_club" },
     { "tag": "list_clubs" },
-    { "tag": "delete_club" }
+    { "tag": "delete_club" },
+
+    { "tag": "add_player" },
+    { "tag": "list_players" },
+    { "tag": "delete_player" }
   ]
 }
+
