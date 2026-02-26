@@ -4,6 +4,7 @@ from clubs_service import add_club, get_all_clubs, delete_club
 from players_service import (
     add_player,
     get_players_by_club,
+    get_all_players,
     update_player_number,
     update_player_position,
     update_player_status,
@@ -39,6 +40,7 @@ class ChatBot:
 
 добави играч Име Фамилия DD-MM-YYYY Националност Клуб Позиция Номер
 покажи играчи на Клуб
+покажи всички играчи
 промени номер на Име Фамилия НовНомер
 промени позиция на Име Фамилия НоваПозиция
 промени статус на Име Фамилия активен/контузен
@@ -120,6 +122,14 @@ class ChatBot:
 
             club = match.group(1).strip()
             result = get_players_by_club(club)
+            self.log_command(text, result)
+            return result
+
+        # ===============================
+        # SHOW ALL PLAYERS
+        # ===============================
+        if lower_text == "покажи всички играчи":
+            result = get_all_players()
             self.log_command(text, result)
             return result
 

@@ -95,6 +95,30 @@ def get_players_by_club(club_name):
 
     return result
 
+# ===============================
+# LIST ALL PLAYERS
+# ===============================
+def get_all_players():
+
+   players = execute_query(
+       """SELECT p.full_name, p.position, p.number, p.status, c.name
+          FROM players p
+          JOIN clubs c ON p.club_id = c.club_id
+          ORDER BY c.name, p.number""",
+       fetch=True
+   )
+
+   if not players:
+       return "Няма въведени играчи."
+
+   result = "Списък с всички играчи:\n"
+
+   for p in players:
+       result += f"{p[0]} | {p[1]} | №{p[2]} | {p[3]} | Клуб: {p[4]}\n"
+
+   return result
+
+
 
 # ===============================
 # UPDATE NUMBER
