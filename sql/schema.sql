@@ -1,6 +1,6 @@
 PRAGMA foreign_keys = ON;
 
--- Ако искаш чисто презареждане
+DROP TABLE IF EXISTS transfers;
 DROP TABLE IF EXISTS matches;
 DROP TABLE IF EXISTS players;
 DROP TABLE IF EXISTS clubs;
@@ -9,40 +9,62 @@ DROP TABLE IF EXISTS clubs;
 -- TABLE: clubs
 ---------------------------------------------------
 CREATE TABLE IF NOT EXISTS clubs (
-    club_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL UNIQUE,
-    city TEXT NOT NULL,
-    founded_year INTEGER NOT NULL
+   club_id INTEGER PRIMARY KEY AUTOINCREMENT,
+   name TEXT NOT NULL UNIQUE,
+   city TEXT NOT NULL,
+   founded_year INTEGER NOT NULL
 );
 
 ---------------------------------------------------
--- TABLE: players (ЕТАП 3 версия)
+-- TABLE: players
 ---------------------------------------------------
 CREATE TABLE IF NOT EXISTS players (
-    player_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    full_name TEXT NOT NULL,
-    birth_date TEXT NOT NULL,
-    nationality TEXT NOT NULL,
-    position TEXT NOT NULL CHECK(position IN ('Вратар','Защитник','Полузащитник','Нападател')),
-    number INTEGER NOT NULL CHECK(number BETWEEN 1 AND 99),
-    status TEXT NOT NULL DEFAULT 'active',
-    club_id INTEGER NOT NULL,
-    FOREIGN KEY (club_id) REFERENCES clubs(club_id)
-        ON DELETE CASCADE
+   player_id INTEGER PRIMARY KEY AUTOINCREMENT,
+   full_name TEXT NOT NULL,
+   birth_date TEXT NOT NULL,
+   nationality TEXT NOT NULL,
+   position TEXT NOT NULL CHECK(position IN ('Вратар','Защитник','Полузащитник','Нападател')),
+   number INTEGER NOT NULL CHECK(number BETWEEN 1 AND 99),
+   status TEXT NOT NULL DEFAULT 'active',
+   club_id INTEGER NOT NULL,
+   FOREIGN KEY (club_id) REFERENCES clubs(club_id)
+       ON DELETE CASCADE
 );
 
 ---------------------------------------------------
 -- TABLE: matches
 ---------------------------------------------------
 CREATE TABLE IF NOT EXISTS matches (
-    match_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    home_club_id INTEGER NOT NULL,
-    away_club_id INTEGER NOT NULL,
-    match_date TEXT NOT NULL,
-    home_goals INTEGER DEFAULT 0,
-    away_goals INTEGER DEFAULT 0,
-    FOREIGN KEY (home_club_id) REFERENCES clubs(club_id),
-    FOREIGN KEY (away_club_id) REFERENCES clubs(club_id)
+   match_id INTEGER PRIMARY KEY AUTOINCREMENT,
+   home_club_id INTEGER NOT NULL,
+   away_club_id INTEGER NOT NULL,
+   match_date TEXT NOT NULL,
+   home_goals INTEGER DEFAULT 0,
+   away_goals INTEGER DEFAULT 0,
+   FOREIGN KEY (home_club_id) REFERENCES clubs(club_id),
+   FOREIGN KEY (away_club_id) REFERENCES clubs(club_id)
+);
+
+---------------------------------------------------
+-- TABLE: transfers
+---------------------------------------------------
+CREATE TABLE IF NOT EXISTS transfers (
+   transfer_id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+   player_id INTEGER NOT NULL,
+   from_club_id INTEGER,
+   to_club_id INTEGER NOT NULL,
+
+   transfer_date TEXT NOT NULL,
+   fee REAL CHECK(fee >= 0),
+
+   note TEXT,
+
+   CHECK (to_club_id != from_club_id),
+
+   FOREIGN KEY (player_id) REFERENCES players(player_id),
+   FOREIGN KEY (from_club_id) REFERENCES clubs(club_id),
+   FOREIGN KEY (to_club_id) REFERENCES clubs(club_id)
 );
 
 ---------------------------------------------------
@@ -56,7 +78,7 @@ INSERT OR IGNORE INTO clubs (name, city, founded_year) VALUES
 ('Черно море', 'Варна', 1913);
 
 ---------------------------------------------------
--- SEED DATA: players (ЕТАП 3 структура)
+-- SEED DATA: players
 ---------------------------------------------------
 INSERT OR IGNORE INTO players
 (full_name, birth_date, nationality, position, number, status, club_id)
@@ -91,3 +113,26 @@ INSERT OR IGNORE INTO matches
 VALUES
 (1, 2, '2024-10-10', 2, 1),
 (3, 4, '2024-11-02', 3, 0);
+
+
+---------------------------------------------------
+-- SEED DATA: transfers
+---------------------------------------------------
+INSERT OR IGNORE INTO transfers
+(player_id, from_club_id, to_club_id, transfer_date, fee)
+VALUES
+
+-- Иван Петров
+(1, 1, 3, '2024-01-10', 50000),
+
+-- Георги Иванов
+(3, 2, 1, '2024-02-15', 30000),
+
+-- Марио Соуза
+(5, 3, 2, '2024-03-20', 70000),
+
+-- Стефан Илиев
+(9, 5, 4, '2024-05-30', 15000),
+
+-- Хуан Карлос
+(8, 4, 3, '2024-06-12', 40000);

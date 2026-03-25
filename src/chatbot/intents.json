@@ -9,6 +9,10 @@
 
     { "tag": "add_player" },
     { "tag": "list_players" },
-    { "tag": "delete_player" }
+    { "tag": "delete_player" },
+
+    { "tag": "transfer_player" },
+    { "tag": "show_transfers_player" },
+    { "tag": "show_transfers_club" }
   ]
 }

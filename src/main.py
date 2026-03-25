@@ -1,26 +1,23 @@
-from db import initialize_database
-from chatbot import ChatBot
-
+from database.db import initialize_database
+from chatbot.chatbot import ChatBot
 
 def main():
-   initialize_database()
-   bot = ChatBot()
+    initialize_database()
+    bot = ChatBot()
 
-   print("Чатботът стартира.")
-   print("Напиши 'помощ' за инструкции.")
-   print("Напиши 'изход' за край.\n")
+    print("Чатботът стартира.")
+    print("Напиши 'помощ' за инструкции.")
+    print("Напиши 'изход' за край.\n")
 
-   while True:
-       user_input = input(">> ")
+    while True:
+        user_input = input(">> ")
+        response = bot.parse(user_input)
 
-       response = bot.parse(user_input)
+        if response == "exit":
+            print("Програмата приключи.")
+            break
 
-       if response == "exit":
-           print("Програмата приключи.")
-           break
-
-       print(response)
-
+        print(response)
 
 if __name__ == "__main__":
-   main()
+    main()
