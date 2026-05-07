@@ -1,23 +1,38 @@
-from services.transfers_service import (
-    transfer_player,
-    list_transfers_by_player,
-    list_transfers_by_club
+from services.leagues_service import (
+    create_league,
+    add_team_to_league,
+    remove_team_from_league,
+    show_league_teams,
+    generate_schedule,
+    delete_schedule,
+    display_full_schedule
 )
 
 
 def handle_intent(intent, params):
-    if intent == "transfer_player":
-        return transfer_player(
-            params["player"],
-            params["from_club"],
-            params["to_club"],
-            params["date"]
-        )
+    # Лиги
+    if intent == "create_league":
+        return create_league(params["name"], params["season"])
 
-    if intent == "show_transfers_player":
-        return list_transfers_by_player(params["name"])
+    if intent == "add_team_to_league":
+        return add_team_to_league(params["club"], params["league_name"], params["season"])
 
-    if intent == "show_transfers_club":
-        return list_transfers_by_club(params["club"])
+    if intent == "remove_team_from_league":
+        return remove_team_from_league(params["club"], params["league_name"], params["season"])
+
+    if intent == "show_league_teams":
+        return show_league_teams(params["league_name"], params["season"])
+
+    if intent == "generate_schedule":
+        return generate_schedule(params["league_name"], params["season"])
+
+    if intent == "delete_schedule":
+        return delete_schedule(params["league_name"], params["season"])
+
+    if intent == "show_schedule":
+        return display_full_schedule(params["league_name"], params["season"])
+
+    # Съществуващите ти intents (transfer_player и т.н.)
+    # ...
 
     return "Невалидна команда."

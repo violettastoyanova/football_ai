@@ -36,4 +36,102 @@ def detect_intent(text):
     if match:
         return "show_transfers_club", {"club": match.group(1)}
 
+    league_intent, league_params = detect_league_intent(text)
+    if league_intent:
+        return league_intent, league_params
+
     return "unknown", {}
+
+
+def detect_league_intent(text):
+    """Разпознава intent-и за лиги"""
+    text = text.strip()
+    lower = text.lower()
+
+    # създай лига
+    match = re.search(
+        r"^създай лига\s+(.+?)\s+(\d{4}/\d{4})$",
+        text,
+        re.IGNORECASE
+    )
+    if match:
+        return "create_league", {
+            "name": match.group(1).strip(),
+            "season": match.group(2).strip()
+        }
+
+    # добави отбор в лига
+    match = re.search(
+        r"^добави отбор\s+(.+?)\s+в лига\s+(.+?)\s+(\d{4}/\d{4})$",
+        text,
+        re.IGNORECASE
+    )
+    if match:
+        return "add_team_to_league", {
+            "club": match.group(1).strip(),
+            "league_name": match.group(2).strip(),
+            "season": match.group(3).strip()
+        }
+
+    # премахни отбор от лига
+    match = re.search(
+        r"^премахни отбор\s+(.+?)\s+от лига\s+(.+?)\s+(\d{4}/\d{4})$",
+        text,
+        re.IGNORECASE
+    )
+    if match:
+        return "remove_team_from_league", {
+            "club": match.group(1).strip(),
+            "league_name": match.group(2).strip(),
+            "season": match.group(3).strip()
+        }
+
+    # покажи отбори в лига
+    match = re.search(
+        r"^покажи отбори в лига\s+(.+?)\s+(\d{4}/\d{4})$",
+        text,
+        re.IGNORECASE
+    )
+    if match:
+        return "show_league_teams", {
+            "league_name": match.group(1).strip(),
+            "season": match.group(2).strip()
+        }
+
+    # генерирай програма
+    match = re.search(
+        r"^генерирай програма\s+(.+?)\s+(\d{4}/\d{4})$",
+        text,
+        re.IGNORECASE
+    )
+    if match:
+        return "generate_schedule", {
+            "league_name": match.group(1).strip(),
+            "season": match.group(2).strip()
+        }
+
+    # изтрий програма
+    match = re.search(
+        r"^изтрий програма\s+(.+?)\s+(\d{4}/\d{4})$",
+        text,
+        re.IGNORECASE
+    )
+    if match:
+        return "delete_schedule", {
+            "league_name": match.group(1).strip(),
+            "season": match.group(2).strip()
+        }
+
+    # покажи програма
+    match = re.search(
+        r"^покажи програма\s+(.+?)\s+(\d{4}/\d{4})$",
+        text,
+        re.IGNORECASE
+    )
+    if match:
+        return "show_schedule", {
+            "league_name": match.group(1).strip(),
+            "season": match.group(2).strip()
+        }
+
+    return None, None
