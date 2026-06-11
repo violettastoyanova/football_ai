@@ -1,8 +1,10 @@
-from database.db import initialize_database
+from database.db import initialize_database, upgrade_database
 from chatbot.chatbot import ChatBot
+
 
 def main():
     initialize_database()
+    upgrade_database()
     bot = ChatBot()
 
     print("Чатботът стартира.")
@@ -18,6 +20,7 @@ def main():
             break
 
         print(response)
+
 
 if __name__ == "__main__":
     main()

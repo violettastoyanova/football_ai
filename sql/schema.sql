@@ -1,6 +1,7 @@
 PRAGMA foreign_keys = ON;
 
-
+DROP TABLE IF EXISTS cards;
+DROP TABLE IF EXISTS goals;
 DROP TABLE IF EXISTS transfers;
 DROP TABLE IF EXISTS matches;
 DROP TABLE IF EXISTS players;
@@ -38,7 +39,7 @@ CREATE TABLE IF NOT EXISTS players (
 
 
 ---------------------------------------------------
--- TABLE: leagues (НОВО за етап 5)
+-- TABLE: leagues
 ---------------------------------------------------
 CREATE TABLE IF NOT EXISTS leagues (
   league_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -50,7 +51,7 @@ CREATE TABLE IF NOT EXISTS leagues (
 
 
 ---------------------------------------------------
--- TABLE: league_teams (НОВО за етап 5)
+-- TABLE: league_teams
 ---------------------------------------------------
 CREATE TABLE IF NOT EXISTS league_teams (
   league_id INTEGER NOT NULL,
@@ -63,20 +64,55 @@ CREATE TABLE IF NOT EXISTS league_teams (
 
 
 ---------------------------------------------------
--- TABLE: matches (променена за етап 5 - няма NOT NULL на match_date)
+-- TABLE: matches (пълна версия за етап 6)
 ---------------------------------------------------
 CREATE TABLE IF NOT EXISTS matches (
   match_id INTEGER PRIMARY KEY AUTOINCREMENT,
   home_club_id INTEGER NOT NULL,
   away_club_id INTEGER NOT NULL,
-  match_date TEXT,           -- Може да е NULL
-  home_goals INTEGER,        -- Може да е NULL
-  away_goals INTEGER,        -- Може да е NULL
-  league_id INTEGER,         -- НОВО: за лигите
-  round_no INTEGER,          -- НОВО: за кръговете
+  match_date TEXT,
+  home_goals INTEGER DEFAULT NULL,
+  away_goals INTEGER DEFAULT NULL,
+  league_id INTEGER,
+  round_no INTEGER,
+  status TEXT DEFAULT 'scheduled',
   FOREIGN KEY (home_club_id) REFERENCES clubs(club_id),
   FOREIGN KEY (away_club_id) REFERENCES clubs(club_id),
   FOREIGN KEY (league_id) REFERENCES leagues(league_id) ON DELETE CASCADE
+);
+
+
+---------------------------------------------------
+-- TABLE: goals (НОВО за етап 6)
+---------------------------------------------------
+CREATE TABLE IF NOT EXISTS goals (
+  goal_id INTEGER PRIMARY KEY AUTOINCREMENT,
+  match_id INTEGER NOT NULL,
+  player_id INTEGER NOT NULL,
+  club_id INTEGER NOT NULL,
+  minute INTEGER NOT NULL CHECK(minute BETWEEN 1 AND 120),
+  is_own_goal INTEGER DEFAULT 0,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (match_id) REFERENCES matches(match_id) ON DELETE CASCADE,
+  FOREIGN KEY (player_id) REFERENCES players(player_id) ON DELETE CASCADE,
+  FOREIGN KEY (club_id) REFERENCES clubs(club_id) ON DELETE CASCADE
+);
+
+
+---------------------------------------------------
+-- TABLE: cards (НОВО за етап 6)
+---------------------------------------------------
+CREATE TABLE IF NOT EXISTS cards (
+  card_id INTEGER PRIMARY KEY AUTOINCREMENT,
+  match_id INTEGER NOT NULL,
+  player_id INTEGER NOT NULL,
+  club_id INTEGER NOT NULL,
+  minute INTEGER NOT NULL CHECK(minute BETWEEN 1 AND 120),
+  card_type TEXT NOT NULL CHECK(card_type IN ('Y', 'R')),
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (match_id) REFERENCES matches(match_id) ON DELETE CASCADE,
+  FOREIGN KEY (player_id) REFERENCES players(player_id) ON DELETE CASCADE,
+  FOREIGN KEY (club_id) REFERENCES clubs(club_id) ON DELETE CASCADE
 );
 
 
@@ -116,7 +152,6 @@ INSERT OR IGNORE INTO clubs (name, city, founded_year) VALUES
 INSERT OR IGNORE INTO players
 (full_name, birth_date, nationality, position, number, status, club_id)
 VALUES
-
 -- ЛЕВСКИ
 ('Иван Петров', '1998-05-12', 'България', 'Нападател', 9, 'активен', 1),
 ('Николай Стоянов', '2001-01-15', 'България', 'Вратар', 1, 'активен', 1),
@@ -136,16 +171,6 @@ VALUES
 -- ЧЕРНО МОРЕ
 ('Стефан Илиев', '1998-06-30', 'България', 'Защитник', 3, 'активен', 5),
 ('Роберто Силва', '1994-04-18', 'Португалия', 'Полузащитник', 6, 'активен', 5);
-
-
----------------------------------------------------
--- SEED DATA: matches (само демо, без league_id)
----------------------------------------------------
-INSERT OR IGNORE INTO matches
-(home_club_id, away_club_id, match_date, home_goals, away_goals)
-VALUES
-(1, 2, '2024-10-10', 2, 1),
-(3, 4, '2024-11-02', 3, 0);
 
 
 ---------------------------------------------------

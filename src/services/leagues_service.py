@@ -113,7 +113,7 @@ def display_full_schedule(league_name, season):
     matches = repo.get_matches_for_league(league_id)
 
     if not matches:
-        return f"Няма генерирана програма за лига '{league_name}'. Използвайте 'генерирай програма' първо."
+        return None  # Връщаме None, ако няма програма
 
     result = f"\n{'=' * 50}\n"
     result += f" ПРОГРАМА - Лига '{league_name}' (сезон {season})\n"
@@ -124,14 +124,19 @@ def display_full_schedule(league_name, season):
     round_matches = []
 
     for match in matches:
+        # Проверка дали match има правилната структура
+        if len(match) < 3:
+            continue
+
         round_no = match[0]
         home = match[1]
         away = match[2]
 
         if round_no != current_round:
-            result += f"\n КРЪГ {current_round}:\n"
-            for m in round_matches:
-                result += f"   {m[0]} vs {m[1]}\n"
+            if round_matches:
+                result += f"\n КРЪГ {current_round}:\n"
+                for m in round_matches:
+                    result += f"   {m[0]} vs {m[1]}\n"
             round_matches = []
             current_round = round_no
 
@@ -144,11 +149,9 @@ def display_full_schedule(league_name, season):
             result += f"   {m[0]} vs {m[1]}\n"
 
     result += f"\n{'=' * 50}\n"
-    result += f" Статистика: {len(set([m[0] for m in matches]))} кръга, {len(matches)} мача\n"
+    result += f" Статистика: {current_round} кръга, {len(matches)} мача\n"
 
     return result
-
-
 
 def generate_schedule(league_name, season):
     """Генерира програма (round-robin) за лига"""
