@@ -1,6 +1,8 @@
+
 from repositories import leagues_repo as repo
 from services.players_service import get_club_id_by_name
 import re
+import random  # ДОБАВЕНА РЕД 1
 
 
 def validate_season(season):
@@ -153,6 +155,7 @@ def display_full_schedule(league_name, season):
 
     return result
 
+
 def generate_schedule(league_name, season):
     """Генерира програма (round-robin) за лига"""
 
@@ -178,6 +181,9 @@ def generate_schedule(league_name, season):
 
     # Създаваме mapping от ID към име
     id_to_name = {team[0]: team[1] for team in teams}
+
+    # ДОБАВЕНА РЕД 2: РАЗМЕСВАНЕ НА ОТБОРИТЕ В СЛУЧАЕН РЕД
+    random.shuffle(team_ids)
 
     # Round-robin алгоритъм (правилен)
     schedule = []
@@ -243,6 +249,7 @@ def generate_schedule(league_name, season):
         result += f"  ... и още {len(schedule) - 5} мача."
 
     return result
+
 
 def delete_schedule(league_name, season):
     """Изтрива програмата за лига"""
