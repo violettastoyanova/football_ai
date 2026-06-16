@@ -76,6 +76,41 @@ class ChatBot:
            self.log_command(text, intent, standings_result)
            return standings_result
 
+       # ===============================
+       # AI PREDICTION
+       # ===============================
+       if lower_text.startswith("прогноза"):
+           from ai.ai_service import predict_match, format_prediction_result
+
+           match = re.search(
+               r'^прогноза\s+(.+?)\s+срещу\s+(.+)$',
+               text,
+               re.IGNORECASE
+           )
+           if not match:
+               error_msg = "Формат: прогноза Отбор1 срещу Отбор2"
+               self.log_command(text, "ai_prediction", error_msg)
+               return error_msg
+
+           home_team = match.group(1).strip()
+           away_team = match.group(2).strip()
+
+           # Проверка дали са различни отбори
+           if home_team.lower() == away_team.lower():
+               error_msg = "Не може да прогнозирате мач между един и същ отбор."
+               self.log_command(text, "ai_prediction", error_msg)
+               return error_msg
+
+           result = predict_match(home_team, away_team)
+           formatted_result = format_prediction_result(result)
+
+           # Определяме статус за лог
+           status = "OK" if not result.get('error') else "ERROR"
+           self.log_command(text, "ai_prediction", formatted_result)
+
+           return formatted_result
+
+
 
        # EXIT
        if lower_text == "изход":
@@ -131,6 +166,10 @@ class ChatBot:
 
 === КЛАСИРАНЕ ===
 покажи класиране <лига> <сезон>
+
+
+=== AI ПРОГНОЗА ===
+прогноза <Отбор1> срещу <Отбор2>
 
 
 === ОБЩИ ===
