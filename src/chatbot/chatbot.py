@@ -17,6 +17,7 @@ from services.transfers_service import (
 )
 from chatbot.handlers_leagues import handle_league_commands
 from chatbot.handlers_matches import handle_match_commands
+from chatbot.handlers_standings import handle_standings_commands
 
 
 class ChatBot:
@@ -65,6 +66,15 @@ class ChatBot:
            intent = self._detect_match_intent(lower_text)
            self.log_command(text, intent, match_result)
            return match_result
+
+       # ===============================
+       # Обработка на команди за класиране
+       # ===============================
+       standings_result = handle_standings_commands(text, lower_text)
+       if standings_result is not None:
+           intent = "show_standings"
+           self.log_command(text, intent, standings_result)
+           return standings_result
 
 
        # EXIT
@@ -117,6 +127,10 @@ class ChatBot:
 гол <Играч>, <Отбор>, <минута> минута [автогол]
 картон <Играч>, <Отбор>, <Y/R>, <минута> минута
 покажи събития [<match_id>]
+
+
+=== КЛАСИРАНЕ ===
+покажи класиране <лига> <сезон>
 
 
 === ОБЩИ ===
